@@ -9,7 +9,6 @@ license: MIT
 topics:
   - configuration
   - options
-  - dependency-injection
   - flutter
   - architecture
   - app-settings
