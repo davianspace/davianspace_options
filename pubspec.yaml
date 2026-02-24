@@ -1,0 +1,24 @@
+name: davianspace_options
+description: Strongly typed configuration binding for Flutter apps, Dart CLI tools, backend services, and web applications inspired by Microsoft.Extensions.Options.
+version: 1.0.0
+homepage: https://github.com/davianspace/davianspace_options
+repository: https://github.com/davianspace/davianspace_options
+issue_tracker: https://github.com/davianspace/davianspace_options/issues
+license: MIT
+
+topics:
+  - configuration
+  - options
+  - dependency-injection
+  - flutter
+  - architecture
+  - app-settings
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies: {}
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
