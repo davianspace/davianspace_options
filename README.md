@@ -31,7 +31,7 @@ Dart, with no reflection, no mirrors, and zero external dependencies.
 
 ```yaml
 dependencies:
-  davianspace_options: ^1.0.0
+  davianspace_options: ^1.0.3
 ```
 
 ---
@@ -180,19 +180,61 @@ void handleRequest(OptionsFactory<FeatureFlags> factory) {
 
 ---
 
-### 7 — Flutter integration hint
+### 7 — DI container integration (`davianspace_dependencyinjection`)
+
+When used with
+[`davianspace_dependencyinjection`](https://pub.dev/packages/davianspace_dependencyinjection),
+the Options Pattern is wired into the container via fluent extension methods
+that automatically register `Options<T>`, `OptionsSnapshot<T>`, and
+`OptionsMonitor<T>` at the correct lifetimes.
+
+```yaml
+# pubspec.yaml
+dependencies:
+  davianspace_options: ^1.0.3
+  davianspace_dependencyinjection: ^1.0.3
+```
 
 ```dart
-// In your service locator / DI setup:
-final getIt = GetIt.instance;
+import 'package:davianspace_options/davianspace_options.dart';
+import 'package:davianspace_dependencyinjection/davianspace_dependencyinjection.dart';
 
-getIt.registerSingleton(
-  OptionsManager<ThemeOptions>(factory: themeFactory),
-);
+class DatabaseOptions {
+  String host = 'localhost';
+  int    port = 5432;
+}
 
-// In a widget:
-final theme = getIt<OptionsManager<ThemeOptions>>().value;
+final provider = ServiceCollection()
+  ..configure<DatabaseOptions>(
+    factory: DatabaseOptions.new,
+    configure: (opts) {
+      opts.host = 'db.prod.internal';
+      opts.port = 5432;
+    },
+  )
+  ..postConfigure<DatabaseOptions>((opts) {
+    if (opts.host.isEmpty) throw ArgumentError('host is required');
+  })
+  .buildServiceProvider();
+
+// Inject by interface — DI handles lifetime automatically.
+final opts      = provider.getRequired<Options<DatabaseOptions>>().value;
+final snapshot  = provider.getRequired<OptionsSnapshot<DatabaseOptions>>().value;
+final monitor   = provider.getRequired<OptionsMonitor<DatabaseOptions>>();
+
+// Live reload — signal the keyed notifier registered for the options type.
+final notifier =
+    provider.getRequiredKeyed<OptionsChangeNotifier>(DatabaseOptions);
+notifier.notifyChange(Options.defaultName);
 ```
+
+Lifetimes registered automatically:
+
+| Injectable type       | Lifetime  |
+|-----------------------|-----------|
+| `Options<T>`          | Singleton |
+| `OptionsSnapshot<T>`  | Scoped    |
+| `OptionsMonitor<T>`   | Singleton |
 
 ---
 

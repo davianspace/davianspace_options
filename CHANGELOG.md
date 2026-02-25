@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] – 2026-02-25
+## [1.0.3] — 2026-02-25
+
+### Changed
+
+- **`lints` dev-dependency bumped** — updated `lints` from `^3.0.0` to `^6.0.0`
+  to eliminate `sort_pub_dependencies` and other new lint recommendations.
+
+---
+
+## [1.0.0] — 2026-02-25
 
 ### Added
 
